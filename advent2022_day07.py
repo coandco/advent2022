@@ -25,10 +25,10 @@ class Node:
                 self.files[name] = int(tag)
                 self.update_cached_size(self.files[name])
 
-    def build_node_dict(self, node_dict: Dict[str, 'Node']):
+    def build_size_dict(self, size_dict: Dict[str, int]):
         for child in self.children.values():
-            node_dict[child.fullname] = child
-            child.build_node_dict(node_dict)
+            size_dict[child.fullname] = child.cached_size
+            child.build_size_dict(size_dict)
 
     def __repr__(self):
         return f"Node({self.fullname}, {self.cached_size})"
@@ -56,13 +56,13 @@ def parse_input(full_input: str) -> Node:
 
 if __name__ == '__main__':
     root_node = parse_input(read_data())
-    node_dict = {"/": root_node}
-    root_node.build_node_dict(node_dict)
-    print(f"Part one: {sum(x.cached_size for x in node_dict.values() if x.cached_size < 100000)}")
+    size_dict = {"/": root_node.cached_size}
+    root_node.build_size_dict(size_dict)
+    print(f"Part one: {sum(x for x in size_dict.values() if x < 100000)}")
     free_space = 70000000 - root_node.cached_size
     space_needed = 30000000
     threshold_to_free = space_needed - free_space
-    print(f"Part two: {min(x.cached_size for x in node_dict.values() if x.cached_size > threshold_to_free)}")
+    print(f"Part two: {min(x for x in size_dict.values() if x > threshold_to_free)}")
 
 
 
