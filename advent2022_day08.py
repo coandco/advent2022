@@ -32,7 +32,7 @@ class Forest:
         return any(self.tree_is_visible_from_direction(coord, step) for step in DIRECTIONS)
 
     def count_visible_trees(self) -> int:
-        return len([x for x in self.grid if self.tree_is_visible(x)])
+        return sum(self.tree_is_visible(x) for x in self.grid)
 
     def viewing_distance_in_direction(self, coord: Coord, step: Coord) -> int:
         trees_visible = 0
