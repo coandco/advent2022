@@ -37,8 +37,7 @@ class Forest:
     def viewing_distance_in_direction(self, coord: Coord, step: Coord) -> int:
         trees_visible = 0
         my_height = self.grid[coord]
-        for to_check in self.coords_to_edge(coord, step):
-            trees_visible += 1
+        for trees_visible, to_check in enumerate(self.coords_to_edge(coord, step), start=1):
             if self.grid[to_check] >= my_height:
                 break
         return trees_visible
