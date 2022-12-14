@@ -44,6 +44,7 @@ class SandSim:
         self.sand = set()
         self.occlusion = walls.copy()
         self.start = start
+        self.start_cache = [start]
         self.min_x, self.max_x = min(point.x for point in self.walls) - 1, max(point.x for point in self.walls) + 1
         # We want our min_y to include the start
         self.min_y, self.max_y = self.start.y, max(point.y for point in self.walls)
@@ -52,60 +53,47 @@ class SandSim:
         # If we're full of sand up to the start, no more can be added
         if self.start in self.occlusion:
             return None
-        current_point = self.start
+        current_point = self.start_cache[-1]
         while current_point.y <= self.max_y:
             new_point = current_point + Coord(x=0, y=1)
             if new_point not in self.occlusion:
+                self.start_cache.append(new_point)
                 current_point = new_point
                 continue
             new_point = current_point + Coord(x=-1, y=1)
             if new_point not in self.occlusion:
+                self.start_cache.append(new_point)
                 current_point = new_point
                 continue
             new_point = current_point + Coord(x=1, y=1)
             if new_point not in self.occlusion:
+                self.start_cache.append(new_point)
                 current_point = new_point
                 continue
             # If we've reached this point, the sand is blocked and we need to add it to our maps
             return current_point
         # If we've reached this point, we're either at the floor or are falling off the bottom
-        return current_point if floor else None
+        if floor:
+            return current_point
+        else:
+            return None
 
     def run_sim(self, floor: bool = False) -> int:
         self.walls = self.original_walls.copy()
         self.sand = set()
         self.occlusion = self.walls.copy()
+        self.start_cache = [self.start]
         while new_grain := self.add_sand_grain(floor=floor):
+            self.start_cache.pop()
             self.sand.add(new_grain)
             self.occlusion.add(new_grain)
         return len(self.sand)
-
-    def print_state(self, floor: bool = False):
-        min_x, max_x = self.min_x, self.max_x
-        min_y, max_y = self.min_y, self.max_y
-        if floor:
-            min_x, max_x = min(point.x for point in self.sand), max(point.x for point in self.sand)
-            min_y, max_y = 0, self.max_y+1
-        for y in range(min_y, max_y + 1):
-            for x in range(min_x, max_x + 1):
-                point = Coord(x=x, y=y)
-                char = " "
-                if point == self.start:
-                    char = "+"
-                elif point in self.walls:
-                    char = "#"
-                elif point in self.sand:
-                    char = "o"
-                print(char, end='')
-            print("\n", end='')
 
 
 def main():
     sand_sim = SandSim(parse_data(read_data().splitlines()))
     print(f"Part one: {sand_sim.run_sim()}")
-    sand_sim.print_state()
     print(f"Part two: {sand_sim.run_sim(floor=True)}")
-    sand_sim.print_state(floor=True)
 
 
 if __name__ == '__main__':
