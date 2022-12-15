@@ -5,9 +5,6 @@ from utils import read_data, Coord as CoordBase
 
 
 class Coord(CoordBase):
-    y: int
-    x: int
-
     def line(self, other: 'Coord') -> Iterator['Coord']:
         if self.x == other.x:
             for y in range(min(self.y, other.y), max(self.y, other.y)+1):
@@ -31,10 +28,6 @@ def parse_data(lines: List[str]) -> Set[Coord]:
         for first, second in windowed(line.split(" -> "), n=2):
             walls.update(Coord.from_string(first).line(Coord.from_string(second)))
     return walls
-
-
-class FullException(Exception):
-    pass
 
 
 class SandSim:
