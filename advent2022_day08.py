@@ -1,4 +1,4 @@
-from utils import read_data, Coord, CARDINAL_NEIGHBORS_2D
+from utils import read_data, BaseCoord as Coord, CARDINAL_NEIGHBORS_2D
 from typing import Dict
 from math import prod
 

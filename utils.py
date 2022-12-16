@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import NamedTuple, Iterator
+from typing_extensions import Self
 import inspect
 
 
@@ -10,63 +11,64 @@ def read_data():
     return filename.read_text()
 
 
-class Coord(NamedTuple):
+class BaseCoord(NamedTuple):
     # Ordered as (y, x) so it can be used as numpy array coords if needed
     y: int
     x: int
 
-    def __add__(self, other: "Coord") -> "Coord":
-        return Coord(x=self.x + other.x, y=self.y + other.y)
+    def __add__(self, other: Self) -> Self:
+        # Using self.__class__ because this is intended to be subclassed and I want to return the subclass
+        return self.__class__(x=self.x + other.x, y=self.y + other.y)
 
-    def __sub__(self, other: "Coord") -> "Coord":
-        return Coord(x=self.x - other.x, y=self.y - other.y)
+    def __sub__(self, other: Self) -> Self:
+        return self.__class__(x=self.x - other.x, y=self.y - other.y)
 
-    def __mul__(self, amount: int) -> "Coord":
-        return Coord(x=self.x * amount, y=self.y * amount)
+    def __mul__(self, amount: int) -> Self:
+        return self.__class__(x=self.x * amount, y=self.y * amount)
 
-    def distance(self, other: "Coord") -> int:
+    def distance(self, other: Self) -> int:
         return abs(self.x - other.x) + abs(self.y - other.y)
 
-    def neighbors(self) -> Iterator["Coord"]:
+    def neighbors(self) -> Iterator[Self]:
         yield from (self + x for x in ALL_NEIGHBORS_2D)
 
-    def cardinal_neighbors(self) -> Iterator["Coord"]:
+    def cardinal_neighbors(self) -> Iterator[Self]:
         yield from (self + x for x in CARDINAL_NEIGHBORS_2D)
 
     def __repr__(self) -> str:
         return f"Coord(x={self.x}, y={self.y})"
 
 
-class Coord3D(NamedTuple):
+class BaseCoord3D(NamedTuple):
     y: int
     x: int
     z: int
 
-    def __add__(self, other: "Coord3D") -> "Coord3D":
-        return Coord3D(x=self.x + other.x, y=self.y + other.y, z=self.z + other.z)
+    def __add__(self, other: Self) -> Self:
+        return self.__class__(x=self.x + other.x, y=self.y + other.y, z=self.z + other.z)
 
-    def __sub__(self, other: "Coord3D") -> "Coord3D":
-        return Coord3D(x=self.x - other.x, y=self.y - other.y, z=self.z - other.z)
+    def __sub__(self, other: Self) -> Self:
+        return self.__class__(x=self.x - other.x, y=self.y - other.y, z=self.z - other.z)
 
-    def __mul__(self, amount: int) -> "Coord3D":
-        return Coord3D(x=self.x * amount, y=self.y * amount, z=self.z * amount)
+    def __mul__(self, amount: int) -> Self:
+        return self.__class__(x=self.x * amount, y=self.y * amount, z=self.z * amount)
 
-    def distance(self, other: "Coord3D") -> int:
+    def distance(self, other: Self) -> int:
         return abs(self.x - other.x) + abs(self.y - other.y) + abs(self.z - other.z)
 
-    def neighbors(self) -> Iterator["Coord3D"]:
+    def neighbors(self) -> Iterator[Self]:
         yield from (self + x for x in ALL_NEIGHBORS_3D)
 
-    def cardinal_neighbors(self) -> Iterator["Coord3D"]:
+    def cardinal_neighbors(self) -> Iterator[Self]:
         yield from (self + x for x in CARDINAL_NEIGHBORS_3D)
 
     def __repr__(self) -> str:
         return f"Coord3D(x={self.x}, y={self.y}, z={self.z})"
 
 
-ALL_NEIGHBORS_2D = tuple(Coord(x=x, y=y) for x in range(-1, 2) for y in range(-1, 2) if (x, y) != (0, 0))
+ALL_NEIGHBORS_2D = tuple(BaseCoord(x=x, y=y) for x in range(-1, 2) for y in range(-1, 2) if (x, y) != (0, 0))
 ALL_NEIGHBORS_3D = tuple(
-    Coord3D(x=x, y=y, z=z) for x in range(-1, 2) for y in range(-1, 2) for z in range(-1, 2) if (x, y) != (0, 0)
+    BaseCoord3D(x=x, y=y, z=z) for x in range(-1, 2) for y in range(-1, 2) for z in range(-1, 2) if (x, y) != (0, 0)
 )
 CARDINAL_NEIGHBORS_2D = tuple(x for x in ALL_NEIGHBORS_2D if not (abs(x.x) == abs(x.y)))
 CARDINAL_NEIGHBORS_3D = tuple(x for x in ALL_NEIGHBORS_3D if not (abs(x.x) == abs(x.y) == abs(x.z)))

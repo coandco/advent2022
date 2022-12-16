@@ -1,10 +1,9 @@
 from typing import List, Set, Iterator, Optional
 from more_itertools import windowed
+from utils import read_data, BaseCoord
 
-from utils import read_data, Coord as CoordBase
 
-
-class Coord(CoordBase):
+class Coord(BaseCoord):
     def line(self, other: 'Coord') -> Iterator['Coord']:
         if self.x == other.x:
             for y in range(min(self.y, other.y), max(self.y, other.y)+1):

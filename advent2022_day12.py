@@ -1,6 +1,6 @@
 from collections import deque, defaultdict
 from typing import Tuple, Deque, DefaultDict, Optional, Iterable, List
-from utils import read_data, Coord
+from utils import read_data, BaseCoord as Coord
 
 
 class Heightmap:
