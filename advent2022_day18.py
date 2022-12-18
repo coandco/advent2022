@@ -25,7 +25,7 @@ class Bounds3D(NamedTuple):
     max_z: int
 
     def expand(self, n: int) -> Self:
-        return Bounds3D(self.min_x-1, self.max_x+1, self.min_y-1, self.max_y+1, self.min_z-1, self.max_z+1)
+        return Bounds3D(self.min_x-n, self.max_x+n, self.min_y-n, self.max_y+n, self.min_z-n, self.max_z+n)
 
     def all(self) -> Iterator[Coord3D]:
         for x in range(self.min_x, self.max_x+1):
