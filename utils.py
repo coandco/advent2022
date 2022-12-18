@@ -68,7 +68,11 @@ class BaseCoord3D(NamedTuple):
 
 ALL_NEIGHBORS_2D = tuple(BaseCoord(x=x, y=y) for x in range(-1, 2) for y in range(-1, 2) if (x, y) != (0, 0))
 ALL_NEIGHBORS_3D = tuple(
-    BaseCoord3D(x=x, y=y, z=z) for x in range(-1, 2) for y in range(-1, 2) for z in range(-1, 2) if (x, y) != (0, 0)
+    BaseCoord3D(x=x, y=y, z=z)
+    for x in range(-1, 2)
+    for y in range(-1, 2)
+    for z in range(-1, 2)
+    if (x, y, z) != (0, 0, 0)
 )
 CARDINAL_NEIGHBORS_2D = tuple(x for x in ALL_NEIGHBORS_2D if not (abs(x.x) == abs(x.y)))
-CARDINAL_NEIGHBORS_3D = tuple(x for x in ALL_NEIGHBORS_3D if not (abs(x.x) == abs(x.y) == abs(x.z)))
+CARDINAL_NEIGHBORS_3D = tuple(x for x in ALL_NEIGHBORS_3D if abs(x.x) + abs(x.y) + abs(x.z) == 1)
