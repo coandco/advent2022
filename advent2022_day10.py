@@ -1,5 +1,6 @@
 from typing import Tuple
 from utils import read_data
+import time
 
 
 # Taken from https://stackoverflow.com/a/2657733
@@ -55,7 +56,7 @@ def execute_instruction(x: int, instruction: str, part_two=False) -> Tuple[int, 
         raise Exception(f"Unknown instruction {instruction}!")
 
 
-if __name__ == '__main__':
+def main():
     # Initialize the 0th item to the starting value, since cycle starts on 1
     x_values = [1]
     x = 1
@@ -63,6 +64,12 @@ if __name__ == '__main__':
         new_x, cycles_taken = execute_instruction(x, line)
         x_values += [x] * cycles_taken
         x = new_x
-    print(f"Part one: {sum(x_values[v]*v for v in range(20, 221, 40))}")
+    print(f"Part one: {sum(x_values[v] * v for v in range(20, 221, 40))}")
     output_str = insert_newlines(''.join("█" if sprite_visible(i, x) else " " for i, x in enumerate(x_values[1:])))
     print(f"Part two: {ocr(output_str)}")
+
+
+if __name__ == '__main__':
+    start = time.monotonic()
+    main()
+    print(f"Time: {time.monotonic() - start}")

@@ -1,6 +1,7 @@
 from collections import deque, defaultdict
-from typing import Tuple, Deque, DefaultDict, Optional, Iterable, List
+from typing import Tuple, Deque, DefaultDict, Iterable
 from utils import read_data, BaseCoord as Coord
+import time
 
 
 class Heightmap:
@@ -39,11 +40,13 @@ class Heightmap:
         return (k for k, v in self.points.items() if v == ord(height))
 
 
-def main(input_str: str):
-    hmap = Heightmap(input_str)
+def main():
+    hmap = Heightmap(read_data())
     print(f"Part one: {hmap.heatmap[hmap.start]}")
     print(f"Part two: {min(hmap.heatmap[x] for x in hmap.all_of_height('a'))}")
 
 
 if __name__ == "__main__":
-    main(read_data())
+    start = time.monotonic()
+    main()
+    print(f"Time: {time.monotonic() - start}")

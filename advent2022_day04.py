@@ -1,5 +1,6 @@
 from typing import Tuple, Set
 from utils import read_data
+import time
 import re
 
 DIGITS = re.compile(r'\d+')
@@ -22,9 +23,17 @@ def ranges_overlap(range1: range, range2: range) -> bool:
 
 
 # INPUT = [line_to_sets(x) for x in read_data().splitlines()]
-INPUT = [line_to_ranges(x) for x in read_data().splitlines()]
 
-if __name__ == '__main__':
+
+def main():
+    INPUT = [line_to_ranges(x) for x in read_data().splitlines()]
     print(f"Part one: {len([x for x in INPUT if ranges_are_subsets(*x)])}")
     print(f"Part two: {len([x for x in INPUT if ranges_overlap(*x)])}")
+
+
+if __name__ == '__main__':
+    start = time.monotonic()
+    main()
+    print(f"Time: {time.monotonic()-start}")
+
 

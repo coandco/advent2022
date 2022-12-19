@@ -1,9 +1,9 @@
-from typing import Tuple, List, Union
-
+from typing import List, Union
 from utils import read_data
 from itertools import zip_longest
 from more_itertools import chunked
 import json
+import time
 
 
 class Packet:
@@ -37,13 +37,18 @@ class Packet:
         raise Exception("Shouldn't reach this")
 
 
-INPUT = [Packet(json.loads(x)) for x in read_data().splitlines() if x]
+def main():
+    INPUT = [Packet(json.loads(x)) for x in read_data().splitlines() if x]
+    print(f"Part one: {sum(i + 1 for i, x in enumerate(chunked(INPUT, 2)) if x[0] < x[1])}")
+    part_two_data = sorted(INPUT + [Packet([[2]])] + [Packet([[6]])])
+    print(f"Part two: {(part_two_data.index(Packet([[2]])) + 1) * (part_two_data.index(Packet([[6]])) + 1)}")
 
 
 if __name__ == '__main__':
-    print(f"Part one: {sum(i+1 for i, x in enumerate(chunked(INPUT, 2)) if x[0] < x[1])}")
-    part_two_data = sorted(INPUT + [Packet([[2]])] + [Packet([[6]])])
-    print(f"Part two: {(part_two_data.index(Packet([[2]]))+1) * (part_two_data.index(Packet([[6]]))+1)}")
+    start = time.monotonic()
+    main()
+    print(f"Time: {time.monotonic() - start}")
+
 
 
 

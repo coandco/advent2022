@@ -1,6 +1,7 @@
 from utils import read_data, BaseCoord as Coord, CARDINAL_NEIGHBORS_2D
 from typing import Dict
 from math import prod
+import time
 
 
 class Forest:
@@ -46,7 +47,13 @@ def parse_input(raw_input: str) -> Dict[Coord, int]:
     return tree_cloud
 
 
-if __name__ == '__main__':
+def main():
     trees = Forest(parse_input(read_data()))
     print(f"Part one: {trees.count_visible_trees()}")
     print(f"Part two: {trees.best_viewing_score()}")
+
+
+if __name__ == '__main__':
+    start = time.monotonic()
+    main()
+    print(f"Time: {time.monotonic() - start}")

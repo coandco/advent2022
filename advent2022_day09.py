@@ -1,17 +1,9 @@
-from utils import read_data
-from typing import NamedTuple, List, Set
+from utils import read_data, BaseCoord
+from typing import NamedTuple, List
+import time
 
 
-class Coord(NamedTuple):
-    x: int
-    y: int
-
-    def __add__(self, other: 'Coord') -> 'Coord':
-        return Coord(x=self.x+other.x, y=self.y+other.y)
-
-    def __sub__(self, other: 'Coord') -> 'Coord':
-        return Coord(x=self.x-other.x, y=self.y-other.y)
-
+class Coord(BaseCoord):
     def normalized(self):
         # Pick the closest compass point (N, NW, W, etc) to a diff coord, going no more than 1 in any direction
         return Coord(
@@ -34,10 +26,10 @@ def move_knots(knots: List[Coord], direction: str) -> List[Coord]:
     return new_knots
 
 
-def handle_input(lines: List[str], length: int) -> int:
+def handle_input(raw_input: str, length: int) -> int:
     knots = [Coord(0, 0)] * length
     tail_locs = {knots[-1]}
-    for line in lines:
+    for line in raw_input.splitlines():
         direction, amount = line.split(" ")
         for _ in range(int(amount)):
             knots = move_knots(knots, direction)
@@ -52,8 +44,13 @@ DIRECTIONS = {
     'L': Coord(x=-1, y=0)
 }
 
-INPUT = read_data().splitlines()
+
+def main():
+    print(f"Part one: {handle_input(read_data(), length=2)}")
+    print(f"Part two: {handle_input(read_data(), length=10)}")
+
 
 if __name__ == '__main__':
-    print(f"Part one: {handle_input(INPUT, length=2)}")
-    print(f"Part two: {handle_input(INPUT, length=10)}")
+    start = time.monotonic()
+    main()
+    print(f"Time: {time.monotonic() - start}")

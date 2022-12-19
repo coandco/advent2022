@@ -1,8 +1,7 @@
 from utils import read_data
 from more_itertools import windowed
 from collections import Counter
-
-INPUT = read_data()
+import time
 
 
 def find_marker(signal: str, window_size: int = 4) -> int:
@@ -13,5 +12,12 @@ def find_marker(signal: str, window_size: int = 4) -> int:
     raise Exception("Marker not found!")
 
 
-print(f"Part one: {find_marker(INPUT, 4)}")
-print(f"Part two: {find_marker(INPUT, 14)}")
+def main():
+    print(f"Part one: {find_marker(read_data(), 4)}")
+    print(f"Part two: {find_marker(read_data(), 14)}")
+
+
+if __name__ == '__main__':
+    start = time.monotonic()
+    main()
+    print(f"Time: {time.monotonic() - start}")

@@ -2,6 +2,7 @@ from typing import List, NamedTuple
 from copy import deepcopy
 import string
 from utils import read_data
+import time
 import re
 
 DIGITS = re.compile(r'\d+')
@@ -33,7 +34,7 @@ def parse_part2(procedure: str) -> List[MoveInstruction]:
 
 
 def move_boxes(stacks: List[List[str]], fromstack: int, tostack: int, amount: int = 1):
-    if len(stacks[instruction.fromstack]) < amount:
+    if len(stacks[fromstack]) < amount:
         raise Exception(f"Tried to move from stack {fromstack}, which has insufficient boxes : {stacks}")
     # Save the boxes we're moving
     boxes_to_move = stacks[fromstack][-amount:]
@@ -43,7 +44,7 @@ def move_boxes(stacks: List[List[str]], fromstack: int, tostack: int, amount: in
     stacks[tostack].extend(boxes_to_move)
 
 
-if __name__ == '__main__':
+def main():
     part1_stacks = parse_part1(INPUT_PART1)
     part2_stacks = deepcopy(part1_stacks)
     instructions = parse_part2(INPUT_PART2)
@@ -54,3 +55,9 @@ if __name__ == '__main__':
     for instruction in instructions:
         move_boxes(part2_stacks, instruction.fromstack, instruction.tostack, instruction.amount)
     print(''.join(x[-1] for x in part2_stacks[1:] if len(x) > 0))
+
+
+if __name__ == '__main__':
+    start = time.monotonic()
+    main()
+    print(f"Time: {time.monotonic()-start}")

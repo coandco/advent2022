@@ -1,6 +1,7 @@
 from typing import List, Set, Iterator, Optional
 from more_itertools import windowed
 from utils import read_data, BaseCoord
+import time
 
 
 class Coord(BaseCoord):
@@ -89,4 +90,6 @@ def main():
 
 
 if __name__ == '__main__':
+    start = time.monotonic()
     main()
+    print(f"Time: {time.monotonic() - start}")

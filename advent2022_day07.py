@@ -1,6 +1,7 @@
 from typing import Dict, Tuple, List, Iterable
 from pathlib import Path
 from utils import read_data
+import time
 
 
 def affected_folders(node: Path) -> Iterable[Path]:
@@ -47,13 +48,20 @@ def parse_input(full_input: str) -> Dict[Path, int]:
     return sizes
 
 
-if __name__ == '__main__':
+def main():
     size_dict = parse_input(read_data())
     print(f"Part one: {sum(x for x in size_dict.values() if x < 100000)}")
     free_space = 70000000 - size_dict[Path("/")]
     space_needed = 30000000
     threshold_to_free = space_needed - free_space
     print(f"Part two: {min(x for x in size_dict.values() if x > threshold_to_free)}")
+
+
+if __name__ == '__main__':
+    start = time.monotonic()
+    main()
+    print(f"Time: {time.monotonic() - start}")
+
 
 
 

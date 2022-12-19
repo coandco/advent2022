@@ -1,5 +1,6 @@
 from utils import read_data
 from typing import NamedTuple
+import time
 
 INPUT = [x.split(" ") for x in read_data().splitlines()]
 ROCK = 0
@@ -55,7 +56,14 @@ class Round:
         self.part_two_score = self.part_two_sign.total_score(self.their_sign)
 
 
-if __name__ == '__main__':
+def main():
     rounds = [Round(*x) for x in INPUT]
     print(f"Part one: {sum(x.part_one_score for x in rounds)}")
     print(f"Part two: {sum(x.part_two_score for x in rounds)}")
+
+
+if __name__ == '__main__':
+    start = time.monotonic()
+    main()
+    print(f"Time: {time.monotonic()-start}")
+

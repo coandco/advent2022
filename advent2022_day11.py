@@ -1,5 +1,6 @@
 from typing import List, Union
 from math import prod
+import time
 import re
 
 from utils import read_data
@@ -47,7 +48,7 @@ class Monkey:
         self.items = []
 
 
-if __name__ == '__main__':
+def main():
     monkeys = [Monkey(x) for x in read_data().split("\n\n")]
     for _ in range(20):
         for monkey in monkeys:
@@ -64,3 +65,8 @@ if __name__ == '__main__':
     most_active_monkeys = sorted([x.inspection_counter for x in monkeys], reverse=True)
     print(f"Part two: {most_active_monkeys[0] * most_active_monkeys[1]}")
 
+
+if __name__ == '__main__':
+    start = time.monotonic()
+    main()
+    print(f"Time: {time.monotonic() - start}")
