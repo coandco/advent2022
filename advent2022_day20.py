@@ -1,101 +1,45 @@
-from typing import Optional, Iterable
-
 from utils import read_data
-import time
+from collections import deque
+from typing import Deque, NamedTuple
 
 
-class Node:
+class Node(NamedTuple):
+    index: int
     value: int
-    prev: 'Node'
-    next: 'Node'
-
-    def __init__(self, value: int):
-        self.value = value
-        self.prev = self.next = self
-
-    def __repr__(self):
-        return f"Node({self.value})"
 
 
 class File:
-    def __init__(self, raw_input: str):
-        ints = [int(x) for x in raw_input.splitlines()]
-        self.start_node = Node(ints[0])
-        self.original_order = [self.start_node]
-        self.zero_node = None
-        for item in ints[1:]:
-            to_append = Node(item)
-            to_append.next = self.start_node
-            to_append.prev = self.start_node.prev
-            self.start_node.prev.next = to_append
-            self.start_node.prev = to_append
-            self.original_order.append(to_append)
-            if item == 0:
-                self.zero_node = to_append
-
-    def traverse_nodes(self) -> Iterable[Node]:
-        yield self.start_node
-        current = self.start_node.next
-        while current is not self.start_node:
-            yield current
-            current = current.next
-
-    def process_node(self, node: Node):
-        if node.value == 0:
-            return
-        if node is self.start_node:
-            self.start_node = node.next
-        amount_to_move = node.value % (len(self.original_order)-1)
-        node_to_insert_after = node
-        for _ in range(amount_to_move):
-            node_to_insert_after = node_to_insert_after.next
-        # Excise the node from the chain
-        node.prev.next = node.next
-        node.next.prev = node.prev
-        # Reconfigure the node to be after node_to_insert_after
-        node.next = node_to_insert_after.next
-        node.prev = node_to_insert_after
-        # Tell the list the node is there
-        node_to_insert_after.next.prev = node
-        node_to_insert_after.next = node
+    def __init__(self, raw_input: str, key: int = 1):
+        self.numlist: Deque[Node] = deque([Node(i, int(x) * key) for i, x in enumerate(raw_input.splitlines())])
 
     def decrypt_file(self):
-        # self.print_nodes()
-        for node in self.original_order:
-            self.process_node(node)
-            # self.print_nodes()
+        for i in range(len(self.numlist)):
+            index_of_node = [x.index for x in self.numlist].index(i)
+            self.numlist.rotate(-index_of_node)
+            node = self.numlist.popleft()
+            amount_to_rotate = node.value % len(self.numlist)
+            self.numlist.rotate(-amount_to_rotate)
+            self.numlist.append(node)
 
     def get_coordinates(self):
-        assert self.zero_node is not None
-        coord_moves = 1000 % (len(self.original_order))
-        current = self.zero_node
-        coord_total = 0
-        for _ in range(3):
-            for _ in range(coord_moves):
-                current = current.next
-            coord_total += current.value
-        return coord_total
-
-    def print_nodes(self):
-        print(", ".join(str(x.value) for x in self.traverse_nodes()))
-
-
-TEST = """1
-2
--3
-3
--2
-0
-4"""
+        zero_index = [x.value for x in self.numlist].index(0)
+        self.numlist.rotate(-zero_index)
+        list_len = len(self.numlist)
+        return sum(self.numlist[(1000 * (x + 1)) % list_len].value for x in range(3))
 
 
 def main():
     efile = File(read_data())
     efile.decrypt_file()
     print(f"Part one: {efile.get_coordinates()}")
+    efile = File(read_data(), key=811589153)
+    for _ in range(10):
+        efile.decrypt_file()
+    print(f"Part two: {efile.get_coordinates()}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
+    import time
     start = time.monotonic()
     main()
     print(f"Time: {time.monotonic()-start}")
