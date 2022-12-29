@@ -1,18 +1,9 @@
-from typing import Set, Dict, Tuple, Optional
-from itertools import zip_longest, chain
+from typing import Dict, Tuple, Optional
 from utils import read_data, BaseCoord as Coord
-import re
 
-DIGITS = re.compile(r"\d+")
-TURN_LETTERS = re.compile(r"[LR]")
-
-
-DIRECTIONS = {"N": Coord(x=0, y=-1), "E": Coord(x=1, y=0), "S": Coord(x=0, y=1), "W": Coord(x=-1, y=0)}
-
-
-TURNS = {"L": {"N": "W", "E": "N", "S": "E", "W": "S"}, "R": {"N": "E", "E": "S", "S": "W", "W": "N"}}
-
-HEADING_VALUES = {"N": 3, "E": 0, "S": 1, "W": 2}
+NORTH, EAST, SOUTH, WEST = (0, 1, 2, 3)
+HEADING_VALUES = (3, 0, 1, 2)
+DIR_OFFSETS: Tuple[Coord, ...] = (Coord(x=0, y=-1), Coord(x=1, y=0), Coord(x=0, y=1), Coord(x=-1, y=0))
 
 
 class Region:
@@ -20,34 +11,66 @@ class Region:
         self,
         name: int,
         origin: Coord,
-        adjacent_regions: Tuple[int, int, int, int],
-        adjacent_rotations: Tuple[int, int, int, int],
+        adjacent_regions: Tuple[Tuple[int, int], Tuple[int, int], Tuple[int, int], Tuple[int, int]],
+        size: int = 50,
     ):
         self.name = name
         self.origin = origin
-        self.north = (adjacent_regions[0], adjacent_rotations[0])
-        self.west = (adjacent_regions[1], adjacent_rotations[1])
-        self.south = (adjacent_regions[2], adjacent_rotations[2])
-        self.west = (adjacent_regions[3], adjacent_rotations[3])
+        self.size = size
+        self.adjacent_regions = adjacent_regions
+        self.faces = (
+            [Coord(x=self.origin.x + i, y=self.origin.y) for i in range(self.size)],
+            [Coord(x=self.origin.x + (self.size - 1), y=self.origin.y + i) for i in range(self.size)],
+            [Coord(x=self.origin.x + i, y=self.origin.y + (self.size - 1)) for i in range(self.size)],
+            [Coord(x=self.origin.x, y=self.origin.y + i) for i in range(self.size)]
+        )
+        self.x_range = range(self.origin.x, self.origin.x + self.size)
+        self.y_range = range(self.origin.y, self.origin.y + self.size)
+
+    def wrap(self, heading: int, point: Coord) -> Tuple['Region', int, Coord]:
+        if point in self:
+            return self, heading, point
+
+        if heading == NORTH and point.y == self.origin.y - 1:
+            my_slot = point.x - self.origin.x
+            new_region, new_side = self.adjacent_regions[NORTH]
+        elif heading == SOUTH and point.y == self.origin.y + self.size:
+            my_slot = point.x - self.origin.x
+            new_region, new_side = self.adjacent_regions[SOUTH]
+        elif heading == WEST and point.x == self.origin.x - 1:
+            my_slot = point.y - self.origin.y
+            new_region, new_side = self.adjacent_regions[WEST]
+        elif heading == EAST and point.x == self.origin.x + self.size:
+            my_slot = point.y - self.origin.y
+            new_region, new_side = self.adjacent_regions[EAST]
+        else:
+            raise Exception(f"Unknown transition point {point} for region {self.name}")
+        # Our new heading is always 180 degrees from the side we're entering
+        new_heading = (new_side + 2) % 4
+        rotations_needed = (new_heading - heading) % 4
+        if rotations_needed == 2:
+            # We want to convert slot 0 to slot -1, slot 1 to slot -2, etc
+            new_coord = REGIONS[new_region].faces[new_side][-(my_slot + 1)]
+        else:
+            new_coord = REGIONS[new_region].faces[new_side][my_slot]
+
+        return REGIONS[new_region], new_heading, new_coord
 
     def __contains__(self, point: Coord):
-        return point.x in range(self.origin.x, self.origin.x + 51) and point.y in range(
-            self.origin.y, self.origin.y + 51
-        )
+        return point.x in self.x_range and point.y in self.y_range
+
+    def __repr__(self):
+        return f"Region({self.name}, {str(self.origin)})"
 
 
-REGIONS = [
-    Region(0, Coord(x=50, y=0), adjacent_regions=(5, 1, 2, 4), adjacent_rotations=(1, 0, 0, 2)),
-    Region(1, Coord(x=100, y=0), adjacent_regions=(5, 4, 2, 0), adjacent_rotations=(2, 2, 1, 0)),
-    Region(2, Coord(x=50, y=50), adjacent_regions=(0, 1, 4, 3), adjacent_rotations=(0, 3, 0, 3)),
-    Region(3, Coord(x=50, y=100), adjacent_regions=(2, 4, 5, 0), adjacent_rotations=(1, 0, 0, 3)),
-    Region(4, Coord(x=0, y=150), adjacent_regions=(2, 1, 5, 3), adjacent_rotations=(0, 2, 1, 0)),
-    Region(5, Coord(x=50, y=150), adjacent_regions=(3, 4, 1, 0), adjacent_rotations=(0, 3, 2, 1)),
+REGIONS = [  # id, origin,                         (NORTH   ,   EAST   ,   SOUTH    ,   WEST )
+    Region(0, Coord(x=50, y=0), adjacent_regions=((5, WEST), (1, WEST), (2, NORTH), (3, WEST))),
+    Region(1, Coord(x=100, y=0), adjacent_regions=((5, SOUTH), (4, EAST), (2, EAST), (0, EAST))),
+    Region(2, Coord(x=50, y=50), adjacent_regions=((0, SOUTH), (1, SOUTH), (4, NORTH), (3, NORTH))),
+    Region(3, Coord(x=0, y=100), adjacent_regions=((2, WEST), (4, WEST), (5, NORTH), (0, WEST))),
+    Region(4, Coord(x=50, y=100), adjacent_regions=((2, SOUTH), (1, EAST), (5, EAST), (3, EAST))),
+    Region(5, Coord(x=0, y=150), adjacent_regions=((3, SOUTH), (4, SOUTH), (1, NORTH), (0, NORTH))),
 ]
-
-
-def get_region(point: Coord):
-    return next(x for x in REGIONS if point in x)
 
 
 class MonkeyMap:
@@ -91,53 +114,41 @@ class MonkeyMap:
         new_y = ((coord.y - self.vbounds[coord.x].start) % len(self.vbounds[coord.x])) + self.vbounds[coord.x].start
         return Coord(x=coord.x, y=new_y)
 
-    def wrap(self, heading: str, coord: Coord):
-        if heading in ("E", "W"):
-            return self.wrap_x(coord)
-        elif heading in ("N", "S"):
-            return self.wrap_y(coord)
-        raise NotImplementedError(f"Unknown heading {heading}")
+    def wrap(self, region: Region, heading: int, coord: Coord, cube=False) -> Tuple[Optional[Region], int, Coord]:
+        if cube:
+            return region.wrap(heading, coord)
+        else:
+            new_coord = self.wrap_y(coord) if heading in (NORTH, SOUTH) else self.wrap_x(coord)
+            # We don't actually care about the region when we're doing part 1
+            return None, heading, new_coord
 
-    def follow_path(self) -> int:
-        heading = "E"
-        loc = Coord(x=self.hbounds[0].start, y=0)
+    def follow_path(self, cube: bool = False) -> int:
+        heading = EAST
+        region = REGIONS[0]
+        loc = region.origin
         for instruction in self.path:
-            if instruction in ("L", "R"):
-                heading = TURNS[instruction][heading]
+            if instruction == "R":
+                heading = (heading + 1) % 4
+            elif instruction == "L":
+                heading = (heading - 1) % 4
             else:
                 for _ in range(int(instruction)):
-                    new_coord = self.wrap(heading, loc + DIRECTIONS[heading])
-                    if self.cloud[new_coord] == ".":
-                        loc = new_coord
+                    new_region, new_heading, new_loc = self.wrap(region, heading, loc + DIR_OFFSETS[heading], cube)
+                    if self.cloud[new_loc] == ".":
+                        region, heading, loc = new_region, new_heading, new_loc
                     else:
                         break
         return (1000 * (loc.y + 1)) + (4 * (loc.x + 1)) + HEADING_VALUES[heading]
 
 
-TEST = """        ...#
-        .#..
-        #...
-        ....
-...#.......#
-........#...
-..#....#....
-..........#.
-        ...#....
-        .....#..
-        .#......
-        ......#.
-
-10R5L5R10L4R5L5"""
-
-
 def main():
     mmap = MonkeyMap(read_data())
     print(f"Part one: {mmap.follow_path()}")
+    print(f"Part two: {mmap.follow_path(cube=True)}")
 
 
 if __name__ == "__main__":
     import time
-
     start = time.monotonic()
     main()
     print(f"Time: {time.monotonic()-start}")
