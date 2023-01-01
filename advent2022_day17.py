@@ -1,4 +1,3 @@
-import time
 from typing import Iterator, NamedTuple, Set, Tuple, Optional, Type, Dict, List
 from typing_extensions import Self
 
@@ -171,6 +170,7 @@ def main():
 
 
 if __name__ == '__main__':
+    import time
     start = time.monotonic()
     main()
     print(f"Time: {time.monotonic()-start}")

@@ -1,6 +1,5 @@
 from utils import read_data
 from typing import NamedTuple
-import time
 
 INPUT = [x.split(" ") for x in read_data().splitlines()]
 ROCK = 0
@@ -63,6 +62,7 @@ def main():
 
 
 if __name__ == '__main__':
+    import time
     start = time.monotonic()
     main()
     print(f"Time: {time.monotonic()-start}")

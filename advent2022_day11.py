@@ -1,6 +1,5 @@
 from typing import List, Union
 from math import prod
-import time
 import re
 
 from utils import read_data
@@ -67,6 +66,7 @@ def main():
 
 
 if __name__ == '__main__':
+    import time
     start = time.monotonic()
     main()
     print(f"Time: {time.monotonic() - start}")

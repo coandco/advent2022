@@ -2,7 +2,7 @@ from typing import List, NamedTuple
 from copy import deepcopy
 import string
 from utils import read_data
-import time
+
 import re
 
 DIGITS = re.compile(r'\d+')
@@ -51,13 +51,14 @@ def main():
     for instruction in instructions:
         for _ in range(instruction.amount):
             move_boxes(part1_stacks, instruction.fromstack, instruction.tostack, 1)
-    print(''.join(x[-1] for x in part1_stacks[1:] if len(x) > 0))
+    print(f"Part one: {''.join(x[-1] for x in part1_stacks[1:] if len(x) > 0)}")
     for instruction in instructions:
         move_boxes(part2_stacks, instruction.fromstack, instruction.tostack, instruction.amount)
-    print(''.join(x[-1] for x in part2_stacks[1:] if len(x) > 0))
+    print(f"Part two: {''.join(x[-1] for x in part2_stacks[1:] if len(x) > 0)}")
 
 
 if __name__ == '__main__':
+    import time
     start = time.monotonic()
     main()
     print(f"Time: {time.monotonic()-start}")

@@ -1,6 +1,5 @@
 from typing import Tuple
 from utils import read_data
-import time
 
 
 # Taken from https://stackoverflow.com/a/2657733
@@ -70,6 +69,7 @@ def main():
 
 
 if __name__ == '__main__':
+    import time
     start = time.monotonic()
     main()
     print(f"Time: {time.monotonic() - start}")

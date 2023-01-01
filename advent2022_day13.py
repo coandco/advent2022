@@ -3,7 +3,6 @@ from utils import read_data
 from itertools import zip_longest
 from more_itertools import chunked
 import json
-import time
 
 
 class Packet:
@@ -45,6 +44,7 @@ def main():
 
 
 if __name__ == '__main__':
+    import time
     start = time.monotonic()
     main()
     print(f"Time: {time.monotonic() - start}")

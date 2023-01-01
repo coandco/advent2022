@@ -1,5 +1,5 @@
 from utils import read_data
-import time
+
 
 INPUT = [x.split("\n") for x in read_data().split("\n\n")]
 
@@ -12,6 +12,7 @@ def main():
 
 
 if __name__ == '__main__':
+    import time
     start = time.monotonic()
     main()
     print(f"Time: {time.monotonic() - start}")

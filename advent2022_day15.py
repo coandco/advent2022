@@ -3,7 +3,6 @@ from typing import Iterable, Tuple, Set, Dict, Deque, List
 from typing_extensions import Self
 from itertools import combinations
 import re
-import time
 from utils import read_data, BaseCoord
 
 DIGITS = re.compile(r'-?\d+')
@@ -81,6 +80,7 @@ def main():
 
 
 if __name__ == '__main__':
+    import time
     start = time.monotonic()
     main()
     print(f"Time: {time.monotonic()-start}")

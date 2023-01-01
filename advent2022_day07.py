@@ -1,7 +1,6 @@
 from typing import Dict, Tuple, List, Iterable
 from pathlib import Path
 from utils import read_data
-import time
 
 
 def affected_folders(node: Path) -> Iterable[Path]:
@@ -58,6 +57,7 @@ def main():
 
 
 if __name__ == '__main__':
+    import time
     start = time.monotonic()
     main()
     print(f"Time: {time.monotonic() - start}")

@@ -2,7 +2,6 @@ from utils import read_data
 from collections import deque
 from typing import NamedTuple, Deque, Iterable, Set
 import re
-import time
 import math
 
 DIGITS = re.compile(r"\d+")
@@ -140,6 +139,7 @@ def main():
 
 
 if __name__ == "__main__":
+    import time
     start = time.monotonic()
     main()
     print(f"Time: {time.monotonic() - start}")

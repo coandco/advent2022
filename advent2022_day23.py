@@ -1,5 +1,5 @@
 from collections import Counter
-from typing import Set, Dict, Tuple
+from typing import Set, Dict
 
 from utils import read_data, BaseCoord as Coord, ALL_NEIGHBORS_2D
 
@@ -15,17 +15,11 @@ DIRECTIONS = [
 class WanderingElves:
     def __init__(self, raw_input: str):
         self.round: int = 0
-        # self.stopped_elves: Set[Coord] = set()
-        # self.moving_elves: Set[Coord] = set()
         self.elves: Set[Coord] = set()
         for y, line in enumerate(raw_input.splitlines()):
             for x, char in enumerate(line):
                 if char == "#":
                     self.elves.add(Coord(x=x, y=y))
-
-    # @property
-    # def elves(self):
-    #     return self.stopped_elves | self.moving_elves
 
     def run_round(self):
         propositions: Dict[Coord, Coord] = {}
@@ -43,29 +37,10 @@ class WanderingElves:
             if elf not in propositions:
                 propositions[elf] = elf
 
-        # self.moving_elves -= self.stopped_elves
-
         counts = Counter(propositions.values())
         self.elves = {v if counts[v] == 1 else k for k, v in propositions.items()}
-        #actually_moved_elves: Set[Coord] = {v for k, v in propositions if counts[v] == 1 and k != v}
-        # if len(self.stopped_elves) < len(self.moving_elves):
-        #     touched_elves: Set[Coord] = {x for x in self.stopped_elves
-        #                                  if any(n in self.moving_elves for n in x.neighbors())}
-        #     self.stopped_elves -= touched_elves
-        #     self.moving_elves |= touched_elves
-        # else:
-        #     touched_elves: Set[Coord] = set()
-        #     for elf in self.moving_elves:
-        #         touched_elves |= {x for x in elf.neighbors() if x in self.stopped_elves}
-        #     self.stopped_elves -= touched_elves
-        #     self.moving_elves |= touched_elves
         self.round += 1
 
-    # def run_round(self):
-    #     stopped_elves, propositions = self.generate_propositions()
-    #     counts = Counter(propositions.values())
-    #     self.elves = {v if counts[v] == 1 else k for k, v in propositions.items()}
-    #     self.round += 1
 
     def print_board(self):
         min_x, max_x = min(x.x for x in self.elves), max(x.x for x in self.elves)
@@ -86,11 +61,6 @@ class WanderingElves:
         while True:
             old_board = self.elves.copy()
             self.run_round()
-            #print(f"Round: {self.round}")
-            #self.print_board()
-            #print(f"Number of elves: {len(self.elves)}")
-            #difference = old_board.symmetric_difference(self.elves)
-            #print(f"Difference: {len(difference)}")
             if old_board == self.elves:
                 return self.round
 

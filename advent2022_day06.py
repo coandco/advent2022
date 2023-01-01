@@ -1,7 +1,6 @@
 from utils import read_data
 from more_itertools import windowed
 from collections import Counter
-import time
 
 
 def find_marker(signal: str, window_size: int = 4) -> int:
@@ -18,6 +17,7 @@ def main():
 
 
 if __name__ == '__main__':
+    import time
     start = time.monotonic()
     main()
     print(f"Time: {time.monotonic() - start}")

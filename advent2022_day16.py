@@ -2,7 +2,6 @@ from typing import Dict, List, Tuple, NamedTuple, FrozenSet, Deque
 from collections import defaultdict, deque
 from itertools import combinations
 from utils import read_data
-import time
 import re
 
 VALVE_REGEX = re.compile(
@@ -88,6 +87,7 @@ def main():
 
 
 if __name__ == "__main__":
+    import time
     start = time.monotonic()
     main()
     print(f"Time: {time.monotonic()-start}")

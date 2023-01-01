@@ -1,6 +1,5 @@
 from typing import Tuple, Set
 from utils import read_data
-import time
 import re
 
 DIGITS = re.compile(r'\d+')
@@ -32,6 +31,7 @@ def main():
 
 
 if __name__ == '__main__':
+    import time
     start = time.monotonic()
     main()
     print(f"Time: {time.monotonic()-start}")

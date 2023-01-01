@@ -1,7 +1,6 @@
 from utils import read_data, BaseCoord as Coord, CARDINAL_NEIGHBORS_2D
 from typing import Dict
 from math import prod
-import time
 
 
 class Forest:
@@ -54,6 +53,7 @@ def main():
 
 
 if __name__ == '__main__':
+    import time
     start = time.monotonic()
     main()
     print(f"Time: {time.monotonic() - start}")

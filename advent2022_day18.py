@@ -1,4 +1,3 @@
-import time
 from collections import deque
 from typing import Set, Tuple, NamedTuple, Iterator
 from typing_extensions import Self
@@ -80,6 +79,7 @@ def main():
 
 
 if __name__ == "__main__":
+    import time
     start = time.monotonic()
     main()
     print(f"Time: {time.monotonic() - start}")
